@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Remote Mouse Control</title>
+  <style>
+    body { background:#111; color:#fff; text-align:center; font-family:Arial; }
+    #area { width:80%; height:500px; margin:20px auto; border:2px solid #0af; background:#222; }
+  </style>
+</head>
+<body>
+  <h2>Remote Mouse Control</h2>
+  <div id="area">Move mouse here</div>
+  <input id="keypress" placeholder="Type text and press Enter" />
+
+  <script>
+    // Replace YOUR_SERVER_IP with your backend server's IP or domain
+    const socket = new WebSocket("ws://YOUR_SERVER_IP:8080");
+    const area = document.getElementById("area");
+    const input = document.getElementById("keypress");
+
+    socket.onopen = () => console.log("Connected to server");
+
+    // Send relative mouse position (0–1 range)
+    area.addEventListener("mousemove", e => {
+      const rect = area.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+      socket.send(JSON.stringify({ type:"mousemove", x:x, y:y }));
+    });
+
+    // Send clicks
+    area.addEventListener("click", () => {
+      socket.send(JSON.stringify({ type:"click" }));
+    });
+
+    // Send key input
+    input.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        socket.send(JSON.stringify({ type:"keypress", key: input.value }));
+        input.value = "";
+      }
+    });
+  </script>
+</body>
+</html>
