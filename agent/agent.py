@@ -27,7 +27,7 @@ def on_open(ws):
 if __name__ == "__main__":
     # Replace with your backend server's public IP/domain
     ws = websocket.WebSocketApp(
-        "ws://YOUR_SERVER_IP:8080",
+        "https://remote-mouse-sg9d.onrender.com",
         on_message=on_message,
         on_error=on_error,
         on_close=on_close
